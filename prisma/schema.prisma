@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Link {
+  id            String   @id @default(cuid())
+  url           String
+  created_on    DateTime @default(now())
+  src_browser   String?
+  src_ip        String?
+  meta          String?
+  preview_desc  String?
+  preview_image String?
+  preview_title String?
+}
+
+model History {
+  viewed_on   DateTime @default(now())
+  src_ip      String?
+  src_browser String?
+  found       Boolean
+  history_id  String   @id @default(uuid())
+  link_id     String
+  meta        String?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model Story_Frames {
+  created_at     DateTime @default(now()) @db.Timestamptz(6)
+  url            String?
+  prompt         String?
+  revised_prompt String?
+  caption        String?
+  story_uuid     String?  @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  frame_uuid     String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+}
+
+model Story {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at     DateTime @default(now()) @db.Timestamptz(6)
+  name String?
+  synopsys String?
+}
+
+model User {
+  id         String   @id
+  
+  created_on DateTime @default(now())
+  url        String
+  username   String?
+  password   String?
+}
